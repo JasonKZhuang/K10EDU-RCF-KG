@@ -15,13 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/elements")
 @RequiredArgsConstructor
 public class ElementController {
-    private final ScheduleService scheduleService;
     private final ElementService elementService;
-    @PostMapping("/generate")
-    public String reGenerateEntities() {
-        scheduleService.scheduleTaskForGeneratingElements();
-        return "success";
-    }
 
     @PostMapping("/filter")
     public String filterByDictionary() {

@@ -20,7 +20,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
@@ -107,6 +106,39 @@ public class ElementService {
             session.close();
         }
         return retList;
+    }
+
+    public List<ElementBean> getElementNodesByName(String argName) {
+        List<ElementBean> myResult = new ArrayList<>();
+        try {
+            Session session = driver.session();
+            myResult = session.readTransaction(tx -> {
+                List<ElementBean> myBeans = new ArrayList<>();
+                String nodeType = "Element";
+                Result result = tx.run(
+                        "MATCH (t:" + nodeType + ") WHERE t.name ='" + argName + " RETURN t ORDER BY t.id ASC");
+                while (result.hasNext()) {
+                    org.neo4j.driver.Record record = result.next();
+                    Node tmpNode = record.get(0).asNode();
+                    // get node id
+                    long tmpId = tmpNode.id();
+                    // get nodeId properties
+                    String nodeId = tmpNode.get("nodeId").asString();
+                    // get title properties
+                    String tmpName = tmpNode.get("name").asString();
+                    // get description properties
+                    String tmpType = tmpNode.get("type").asString();
+                    // create return single bean
+                    ElementBean bean = new ElementBean(tmpId, nodeId, tmpName, tmpType);
+                    myBeans.add(bean);
+                }
+                return myBeans;
+            });
+            session.close();
+        } catch (Exception exp) {
+            exp.printStackTrace();
+        }
+        return myResult;
     }
 
     public List<ElementBean> getAllElementNodes() {

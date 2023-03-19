@@ -226,7 +226,7 @@ public class OutcomeService {
         return retValue;
     }
 
-    public OutcomeBean getOutcomesByTitle(String argTitle) {
+    public OutcomeBean getOutcomeByTitle(String argTitle) {
         OutcomeBean retValues = null;
         try {
             List<OutcomeNode> entities = outcomeRepository.findByTitle(argTitle);
@@ -236,6 +236,26 @@ public class OutcomeService {
                 retValues.setTitle(entities.get(0).getTitle());
                 retValues.setLevel(entities.get(0).getLevel());
                 retValues.setDescription(entities.get(0).getDescription());
+            }
+        } catch (Exception ex) {
+            throw new ServiceException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+        return retValues;
+    }
+
+    public List<OutcomeBean> getOutcomesByTitle(String argTitle) {
+        List<OutcomeBean> retValues = new ArrayList<>();
+        try {
+            List<OutcomeNode> entities = outcomeRepository.findByTitle(argTitle);
+            if (entities != null && entities.size() > 0) {
+                for ( OutcomeNode tmpNode: entities ) {
+                    OutcomeBean tmpOutcome = new OutcomeBean();
+                    tmpOutcome.setId(entities.get(0).getId());
+                    tmpOutcome.setTitle(entities.get(0).getTitle());
+                    tmpOutcome.setLevel(entities.get(0).getLevel());
+                    tmpOutcome.setDescription(entities.get(0).getDescription());
+                    retValues.add(tmpOutcome);
+                }
             }
         } catch (Exception ex) {
             throw new ServiceException(HttpStatus.NOT_FOUND, ex.getMessage());

@@ -13,8 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/outcomes")
 @RequiredArgsConstructor
@@ -54,7 +52,7 @@ public class OutcomeController {
     }
     @GetMapping(value = "/title/{title}")
     OutcomeBean getOutcomeByTitle(@PathVariable(name = "title", required = true) String title) {
-        return outcomeService.getOutcomesByTitle(title);
+        return outcomeService.getOutcomeByTitle(title);
     }
 
 }
